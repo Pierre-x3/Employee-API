@@ -10,7 +10,7 @@ const addEmployee = async (req, res) => {
   if(!age) new Error('The paramter "name" is required.');
 
   let response = await createEmployee({ name, lastname, age });
-  return new Success().send(response);
+  return new Success(response).send(res);
 }
 
 module.exports = { addEmployee };
