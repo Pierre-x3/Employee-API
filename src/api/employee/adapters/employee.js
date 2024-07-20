@@ -1,5 +1,5 @@
 const employeeAdapter = (data) => {
-  return { name: data.name, lastname: data.lastname };
+  return { name: data.name, lastname: data.lastname, id: data.id };
 } 
 
 const employeeAdapterAll = (data) => {
