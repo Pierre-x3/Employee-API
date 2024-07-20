@@ -1,3 +1,4 @@
+const { getSQLiteDB } = require("../../../database/SQLite");
 
 const createEmployee = async ({ name, lastname, age }) => {
   const db = await getSQLiteDB();
