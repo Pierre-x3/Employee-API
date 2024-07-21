@@ -1,9 +1,12 @@
 const { Error, Success } = require("../../../common/response.common");
+const { connectRedis } = require("../../../database/Redis/connect.redis");
 const { removeById } = require("../services/removeById");
 
-
 const removeEmployee = async (req, res) => { 
-  let { id } = req.params
+  let { id } = req.params;
+  const clientRedis = await connectRedis();
+
+  await clientRedis.del(`getEmployees-${req.userId}`);
 
   if(!id?.trim())
     throw new Error('The parameter "id" is required.');

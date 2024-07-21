@@ -13,6 +13,8 @@ const authorizationMiddleware = async (req, res, next) => {
 
     let tokenContent = validateToken(token);
 
+    req.userId = tokenContent.id;
+
     if(tokenContent) return next();
     else {
       throw new Unathorized(`Access denied.`);
