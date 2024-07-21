@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cross-env NODE_ENV=production nodemon ./src/server/server.js",
-    "dev": "nodemon ./src/server/server.js"
+    "start": "cross-env NODE_ENV=production node ./src/server/server.js",
+    "dev": "nodemon ./src/server/server.js",
+    "test": "jest"
   },
   "keywords": [],
   "author": "Pierre Bernaola",
@@ -23,5 +23,9 @@
     "redis": "^4.6.15",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
   }
 }

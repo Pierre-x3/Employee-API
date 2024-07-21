@@ -1,10 +1,7 @@
-const { getSQLiteDB } = require("../../../database/SQLite")
+const { getEmployeeByIdRepo } = require('../repositories/getEmployeeById.js')
 
 const getById = async (employeeId) => {
-  const db = await getSQLiteDB();
-  return await db.get(`
-    SELECT * FROM employee WHERE id="${employeeId}" 
-  `);
+  return await getEmployeeByIdRepo(employeeId);
 }
 
 module.exports = { getById };
