@@ -15,7 +15,7 @@ const addEmployees = async (req, res) => {
 
   let response = await createEmployees(employees);
 
-  return new Success(response).send(send);
+  return new Success(response).send(res);
 }
 
 module.exports = { addEmployees };
