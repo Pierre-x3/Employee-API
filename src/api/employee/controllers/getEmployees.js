@@ -15,7 +15,6 @@ const getEmployees = async (req, res) => {
     return new Success(JSON.parse(redisContent)).send(res);
 
   let response = employeeAdapterAll(employees);
-  console.log('se obtuvo nuevos employees')
   clientRedis.set(`getEmployees-${req.userId}`, JSON.stringify(response));
 
   return new Success(response).send(res);
