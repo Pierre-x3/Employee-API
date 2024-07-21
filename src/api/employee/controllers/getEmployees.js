@@ -4,7 +4,6 @@ const { employeeAdapterAll } = require("../adapters/employee.js");
 const { getAll } = require("../services/getAll.js");
 
 const getEmployees = async (req, res) => {
-  let employees = await getAll();
   let clientRedis = await connectRedis();
 
   let redisContent = await clientRedis.get(
@@ -14,6 +13,7 @@ const getEmployees = async (req, res) => {
   if(redisContent) 
     return new Success(JSON.parse(redisContent)).send(res);
 
+  let employees = await getAll();
   let response = employeeAdapterAll(employees);
   clientRedis.set(`getEmployees-${req.userId}`, JSON.stringify(response));
 
