@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node ./src/server/server.js",
-    "dev": "nodemon ./src/server/server.js",
+    "dev": "node --watch ./src/server/server.js",
     "test": "jest"
   },
   "keywords": [],
@@ -22,7 +22,8 @@
     "nodemon": "^3.1.4",
     "redis": "^4.6.15",
     "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "winston": "^3.13.1"
   },
   "devDependencies": {
     "jest": "^29.7.0",

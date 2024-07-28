@@ -1,4 +1,4 @@
-const { Error, Success } = require("../../../common/response.common");
+const { Success, BadRequest } = require("../../../common/response.common");
 const { connectRedis } = require("../../../database/Redis/connect.redis");
 const { removeById } = require("../services/removeById");
 
@@ -9,7 +9,7 @@ const removeEmployee = async (req, res) => {
   await clientRedis.del(`getEmployees-${req.userId}`);
 
   if(!id?.trim())
-    throw new Error('The parameter "id" is required.');
+    throw new BadRequest('The parameter "id" is required.');
 
   let response = await removeById(id);
 

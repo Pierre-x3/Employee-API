@@ -1,21 +1,32 @@
-const TYPE_CODES = {
+
+const CODES_SUCCESS = {
   success: 200,
-  error: 400,
-  internalError: 500,
-  unathorized: 401,
+  created: 201,
+  accept: 203,
+  notContent: 204
+};
+
+const CODES_ERROR = {
+  badRequest: 400,
+  unauthorized: 401,
+  forbidden: 403,
+  notFound: 404,
+  notAllowed: 405,
+  notAcceptable: 406,
+  conflict: 409,
+  internalError: 500
 };
 
 class Response {
-  constructor({ status, code, message, data }){
-    this.status = status;
-    this.code = code;
+  constructor({ message, code, data }) {
     this.message = message;
+    this.code = code;
     this.data = data;
   }
 
-  send(res){
-    return res.status(this.code).json({
-      status: this.status,
+  send(res) {
+    res.status(this.code).json({
+      status: true,
       message: this.message,
       data: this.data
     });
@@ -23,68 +34,131 @@ class Response {
 }
 
 class Success extends Response {
-  constructor(data, message=false){
-    super({
-      status: true,
-      code: TYPE_CODES.success,
-      message: message || 'The operation is sucessfully.',
+  constructor(data, message){
+    super({ 
+      code: CODES_SUCCESS.success, 
+      message: message || 'satisfactorily completed', 
       data
     });
   }
 }
 
-class Error extends Response {
-  constructor(message){
-    super({
-      status: false,
-      code: TYPE_CODES.error,
-      message
+class NotContent extends Response {
+  constructor(message) {
+    super({ 
+      code: CODES_SUCCESS.notContent, 
+      message: message || 'satisfactorily completed'
     });
   }
 }
 
-class Unathorized extends Response {
-  constructor(message){
-    super({
+class BaseError extends Error {
+  constructor({ message, isOperation, code }){
+    super(message);
+    this.code = code;
+    this.isOperation = isOperation;
+    Error.captureStackTrace(this);
+  }
+
+  send(res){
+    res.status(this.code).json({
       status: false,
-      code: TYPE_CODES.unathorized,
-      message
+      message: this.message
     });
   }
 }
 
-class InternalError extends Response {
+class BadRequest extends BaseError {
   constructor(message){
     super({
-      status: false,
-      code: TYPE_CODES.internalError,
-      message
-    });
+      code: CODES_ERROR.badRequest,
+      isOperation: true,
+      message: message || 'The server could not understand the request due to invalid syntax.' 
+    })
   }
 }
 
-
-class HandlerError {
-  constructor(res, error){
-    this.error = error;
-    this.res = res;
-  }
-
-  exec(){
-    let isCustomizeError = this.error instanceof Response;
-    if(isCustomizeError) return this.error.send(this.res);
-    
-    let isObjectError = typeof this.error == 'object';
-    return new InternalError(
-      isObjectError ? this.error.message : this.error
-    ).send(this.res);
+class Unauthorized extends BaseError {
+  constructor(message){
+    super({
+      code: CODES_ERROR.unauthorized,
+      isOperation: true,
+      message: message || 'Authentication is required and has failed or has not yet been provided'
+    })
   }
 }
+
+class Forbidden extends BaseError {
+  constructor(message){
+    super({
+      code: CODES_ERROR.forbidden,
+      isOperation: true,
+      message: message || 'You do not have permission to access the requested resource'
+    })
+  }
+}
+
+class NotFound extends BaseError {
+  constructor(message){
+    super({
+      code: CODES_ERROR.notFound,
+      isOperation: true,
+      message: message || 'The requested resource could not be found on this server'
+    })
+  }
+}
+
+class NotAllowed extends BaseError {
+  constructor(message){
+    super({
+      code: CODES_ERROR.notAllowed,
+      isOperation: true,
+      message: message || 'The request method is not supported for the requested resource'
+    })
+  }
+}
+
+class Conflict extends BaseError {
+  constructor(message){
+    super({
+      code: CODES_ERROR.conflict,
+      isOperation: true,
+      message: message || 'The request could not be completed due to a conflict with the current state of the resource'
+    })
+  }
+}
+
+class InternalError extends BaseError {
+  constructor(message){
+    super({
+      code: CODES_ERROR.internalError,
+      isOperation: false,
+      message: message || 'An unexpected error occurred on the server. Please try again later'
+    })
+  }
+}
+
+const isOperationError = (err) => {
+  return err instanceof BaseError;
+}
+
+const handerError = (res, err) => {
+  if(isOperationError(err)){
+    err.send(res);
+  } else new InternalError(err.message).send(res);
+}
+
 
 module.exports = {
-  Success,
-  Error,
+  handerError,
+  isOperationError,
   InternalError,
-  HandlerError,
-  Unathorized
+  Conflict,
+  NotAllowed,
+  NotFound,
+  Forbidden,
+  BadRequest,
+  Unauthorized,
+  Success,
+  NotContent
 };
